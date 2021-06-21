@@ -35,6 +35,7 @@ import {
 @UseGuards(RolesGuard)
 export class ContestController {
   constructor(private contestService: ContestService) {}
+  @Roles(Role.Admin, Role.User)
   @Get('/now')
   @ApiOkResponse({
     type: ContestDTO,
@@ -44,6 +45,7 @@ export class ContestController {
     return this.contestService.currentContest();
   }
 
+  @Roles(Role.Admin, Role.User)
   @Get('/:contestId')
   @ApiOkResponse({
     type: ContestDTO,

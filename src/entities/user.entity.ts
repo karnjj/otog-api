@@ -20,7 +20,7 @@ import { UserContest } from './userContest.entity';
 @Scopes(() => ({
   noPass: {
     attributes: {
-      exclude: ['password', 'email', 'creationDate', 'updateDate'],
+      exclude: ['password', 'creationDate', 'updateDate'],
     },
   },
 }))

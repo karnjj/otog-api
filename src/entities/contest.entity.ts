@@ -9,11 +9,10 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { strToObj } from '../utils';
-import { ContestProblem } from './contestProblem.entity';
+import { ProblemContest } from './problemContest.entity';
 import { Problem } from './problem.entity';
 import { User } from './user.entity';
 import { UserContest } from './userContest.entity';
-import { ContestMode, GradingMode } from '../core/constants';
 
 @Scopes(() => ({
   full: {
@@ -43,7 +42,7 @@ export class Contest extends Model {
   @Column
   timeEnd: Date;
 
-  @BelongsToMany(() => Problem, () => ContestProblem)
+  @BelongsToMany(() => Problem, () => ProblemContest)
   problems: Problem[];
 
   @BelongsToMany(() => User, () => UserContest)

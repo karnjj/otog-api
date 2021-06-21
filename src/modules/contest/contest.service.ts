@@ -4,14 +4,12 @@ import { col } from 'sequelize';
 import { fn } from 'sequelize';
 import { Op, literal } from 'sequelize';
 import {
-  ContestMode,
-  CONTESTPROBLEM_REPOSITORY,
+  PROBLEMCONTEST_REPOSITORY,
   CONTEST_REPOSITORY,
-  GradingMode,
   Role,
   USERCONTEST_REPOSITORY,
 } from 'src/core/constants';
-import { ContestProblem } from 'src/entities/contestProblem.entity';
+import { ProblemContest } from 'src/entities/problemContest.entity';
 import { Submission } from 'src/entities/submission.entity';
 import { User } from 'src/entities/user.entity';
 import { UserContest } from 'src/entities/userContest.entity';
@@ -22,8 +20,8 @@ import { CreateContestDTO } from './dto/contest.dto';
 export class ContestService {
   constructor(
     @Inject(CONTEST_REPOSITORY) private contestRepository: typeof Contest,
-    @Inject(CONTESTPROBLEM_REPOSITORY)
-    private contestProblemRepository: typeof ContestProblem,
+    @Inject(PROBLEMCONTEST_REPOSITORY)
+    private contestProblemRepository: typeof ProblemContest,
     @Inject(USERCONTEST_REPOSITORY)
     private userContestRepository: typeof UserContest,
   ) {}
@@ -82,8 +80,8 @@ export class ContestService {
     });
   }
 
-  currentContest(): Promise<Contest> {
-    return this.contestRepository.scope('full').findOne({
+  async currentContest() {
+    const contest = await this.contestRepository.scope('full').findOne({
       where: {
         timeEnd: {
           [Op.gte]: Date.now() - 60 * 60 * 1000,
@@ -91,6 +89,10 @@ export class ContestService {
       },
       order: [['id', 'DESC']],
     });
+    if (contest.timeStart.getTime() > Date.now()) {
+      contest.problems = [];
+    }
+    return contest;
   }
 
   getStartedAndUnFinishedContest(): Promise<Contest> {
@@ -114,7 +116,7 @@ export class ContestService {
   ) {
     try {
       if (show) {
-        const contestProblem = new ContestProblem();
+        const contestProblem = new ProblemContest();
         contestProblem.problemId = problemId;
         contestProblem.contestId = contestId;
         await contestProblem.save();
