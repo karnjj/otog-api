@@ -1,10 +1,10 @@
 import {
-  CONTESTPROBLEM_REPOSITORY,
+  PROBLEMCONTEST_REPOSITORY,
   CONTEST_REPOSITORY,
   USERCONTEST_REPOSITORY,
 } from 'src/core/constants';
 import { Contest } from 'src/entities/contest.entity';
-import { ContestProblem } from 'src/entities/contestProblem.entity';
+import { ProblemContest } from 'src/entities/problemContest.entity';
 import { UserContest } from 'src/entities/userContest.entity';
 
 export const contestProvider = [
@@ -13,8 +13,8 @@ export const contestProvider = [
     useValue: Contest,
   },
   {
-    provide: CONTESTPROBLEM_REPOSITORY,
-    useValue: ContestProblem,
+    provide: PROBLEMCONTEST_REPOSITORY,
+    useValue: ProblemContest,
   },
   {
     provide: USERCONTEST_REPOSITORY,

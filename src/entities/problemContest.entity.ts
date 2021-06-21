@@ -7,8 +7,8 @@ import {
 } from 'sequelize-typescript';
 import { Contest } from './contest.entity';
 import { Problem } from './problem.entity';
-@Table({ tableName: 'contestProblem' })
-export class ContestProblem extends Model {
+@Table({ tableName: 'problemContest' })
+export class ProblemContest extends Model {
   @PrimaryKey
   @ForeignKey(() => Contest)
   @Column
