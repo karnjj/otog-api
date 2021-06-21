@@ -32,8 +32,6 @@ export class ContestService {
     try {
       const contest = new Contest();
       contest.name = createContest.name;
-      contest.mode = createContest.mode;
-      contest.gradingMode = createContest.gradingMode;
       contest.timeStart = createContest.timeStart;
       contest.timeEnd = createContest.timeEnd;
       return await contest.save();

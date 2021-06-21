@@ -35,17 +35,6 @@ import {
 @UseGuards(RolesGuard)
 export class ContestController {
   constructor(private contestService: ContestService) {}
-
-  @Get()
-  @ApiOkResponse({
-    type: ContestDTO,
-    isArray: true,
-    description: 'Get all contests',
-  })
-  getAllContest() {
-    return this.contestService.findAll();
-  }
-
   @Get('/now')
   @ApiOkResponse({
     type: ContestDTO,
@@ -65,6 +54,19 @@ export class ContestController {
     return this.contestService.findOneById(contestId);
   }
 
+  //Admin Only
+  @Roles(Role.Admin)
+  @Get()
+  @ApiOkResponse({
+    type: ContestDTO,
+    isArray: true,
+    description: 'Get all contests',
+  })
+  getAllContest() {
+    return this.contestService.findAll();
+  }
+
+  @Roles(Role.Admin)
   @Get('/:contestId/scoreboard')
   @ApiOkResponse({
     type: ScoreboardDTO,
@@ -80,8 +82,6 @@ export class ContestController {
     if (!scoreboard) throw new NotFoundException();
     return scoreboard;
   }
-
-  //Admin Only
 
   @Roles(Role.Admin)
   @Post()
@@ -105,14 +105,5 @@ export class ContestController {
     @Body('show', ParseBoolPipe) show: boolean,
   ) {
     return this.contestService.addProblemToContest(contestId, problemId, show);
-  }
-
-  @Roles(Role.Admin)
-  @Post('/:contestId/signup')
-  addUserToContest(
-    @Param('contestId', ParseIntPipe) contestId: number,
-    @Body('userId', ParseIntPipe) userId: number,
-  ) {
-    return this.contestService.addUserToContest(contestId, userId);
   }
 }

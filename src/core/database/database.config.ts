@@ -3,7 +3,7 @@ import { IDatabaseConfig } from './interfaces/dbConfig.interface';
 export const databaseConfig: IDatabaseConfig = {
   development: {
     dialect: 'mysql',
-    host: 'db',
+    host: 'mysql',
     port: 8888,
     username: 'root',
     password: '0000',
@@ -12,7 +12,7 @@ export const databaseConfig: IDatabaseConfig = {
   production: {
     dialect: 'mysql',
     host: 'localhost',
-    port: 8888,
+    port: 3306,
     username: 'root',
     password: '0000',
     database: 'otog',

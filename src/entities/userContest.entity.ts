@@ -18,10 +18,4 @@ export class UserContest extends Model {
   @ForeignKey(() => Contest)
   @Column
   contestId: number;
-
-  @Column
-  rank: number;
-
-  @Column
-  ratingAfterUpdate: number;
 }

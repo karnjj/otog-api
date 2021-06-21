@@ -1,15 +1,12 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PROBLEM_REPOSITORY, Role } from 'src/core/constants';
+import { PROBLEM_REPOSITORY } from 'src/core/constants';
 import { Problem } from '../../entities/problem.entity';
 import { existsSync, mkdirSync, renameSync, unlinkSync } from 'fs';
-import { Submission } from 'src/entities/submission.entity';
-import { Op, literal } from 'sequelize';
 import {
   CreateProblemDTO,
   EditProblemDTO,
@@ -17,14 +14,10 @@ import {
 } from './dto/problem.dto';
 import { createReadStream } from 'fs';
 import { Extract } from 'unzipper';
-import { UserDTO } from '../user/dto/user.dto';
-import { SubmissionService } from '../submission/submission.service';
-import { lowerBound, upperBound } from 'src/utils';
 @Injectable()
 export class ProblemService {
   constructor(
     @Inject(PROBLEM_REPOSITORY) private problemRepository: typeof Problem,
-    private submissionService: SubmissionService,
   ) {}
 
   async create(
@@ -38,7 +31,6 @@ export class ProblemService {
       problem.timeLimit = createProblem.timeLimit;
       problem.memoryLimit = createProblem.memoryLimit;
       problem.case = createProblem.case;
-      problem.show = false;
       await problem.save();
 
       //save pdf file
@@ -121,73 +113,8 @@ export class ProblemService {
       throw new BadRequestException();
     }
   }
-
-  async findAllNotShow() {
-    const problem = await this.problemRepository.findAll({
-      where: {
-        show: true,
-      },
-      group: ['id'],
-      raw: true,
-      nest: true,
-    });
-    const latestAccept = await this.submissionService.findAllLatestAccept();
-    return this.addPassedCountToProblem(problem, latestAccept);
-  }
-
-  async findAllWithSubmissionByUserId(userId: number) {
-    const problem = await this.problemRepository.findAll({
-      where: {
-        show: true,
-      },
-      include: [
-        {
-          model: Submission,
-          where: {
-            id: {
-              [Op.in]: [
-                literal(
-                  'SELECT MAX(id) FROM submission GROUP BY problemId,userId',
-                ),
-              ],
-            },
-            userId,
-          },
-          required: false,
-        },
-      ],
-      raw: true,
-      nest: true,
-    });
-
-    const latestAccept = await this.submissionService.findAllLatestAccept();
-    return this.addPassedCountToProblem(problem, latestAccept);
-  }
-
-  async findAllWithSubmissionByUserId_ADMIN(userId: number) {
-    const problem = await this.problemRepository.findAll({
-      include: [
-        {
-          model: Submission,
-          where: {
-            id: {
-              [Op.in]: [
-                literal(
-                  'SELECT MAX(id) FROM submission GROUP BY problemId,userId',
-                ),
-              ],
-            },
-            userId,
-          },
-          required: false,
-        },
-      ],
-      raw: true,
-      nest: true,
-    });
-
-    const latestAccept = await this.submissionService.findAllLatestAccept();
-    return this.addPassedCountToProblem(problem, latestAccept);
+  async findAll() {
+    return await this.problemRepository.findAll();
   }
 
   async findOneById(id: number): Promise<Problem> {
@@ -198,37 +125,5 @@ export class ProblemService {
     const dir = `${process.cwd()}/docs/${problem?.id}.pdf`;
     if (!existsSync(dir)) throw new NotFoundException();
     return `${process.cwd()}/docs/${problem.id}.pdf`;
-  }
-
-  async changeProblemShowById(problemId: number, show: boolean) {
-    const problem = await this.problemRepository.findOne({
-      where: {
-        id: problemId,
-      },
-    });
-    if (problem.show == show) throw new BadRequestException();
-    problem.show = show;
-    problem.recentShowTime = new Date();
-    return problem.save();
-  }
-
-  addPassedCountToProblem(problem: Problem[], latestAccept: Submission[]) {
-    var result: any[] = new Array();
-    for (var i in problem) {
-      let passedCount = 0;
-      let lIdx = lowerBound(latestAccept, problem[i].id, (x) => x.problemId);
-      let rIdx = upperBound(latestAccept, problem[i].id, (x) => x.problemId);
-      if (lIdx != -1) passedCount = rIdx - lIdx;
-      result.push({ ...problem[i], passedCount });
-    }
-    return result;
-  }
-
-  async findAllUserAcceptByProblemId(problemId: number) {
-    const latestAccept = await this.submissionService.findAllLatestAccept();
-    let lIdx = lowerBound(latestAccept, problemId, (x) => x.problemId);
-    let rIdx = upperBound(latestAccept, problemId, (x) => x.problemId);
-    const temp = latestAccept.slice(lIdx, rIdx);
-    return temp.map((submission) => submission.user);
   }
 }

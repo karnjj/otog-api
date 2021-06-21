@@ -8,7 +8,6 @@ import {
   AuthResDTO,
   SignupResDTO,
 } from './dto/auth.dto';
-import { JwtRefreshTokenAuthGuard } from '../../core/guards/jwt-refreshtoken-auth.guard';
 import { LocalAuthGuard } from '../../core/guards/local-auth.guard';
 import { Public } from '../../core/decorators/isPublic.decorator';
 import { User } from 'src/core/decorators/user.decorator';
@@ -20,13 +19,13 @@ import { UserDTO } from '../user/dto/user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @Post('/register')
+  @Post()
   @ApiBody({
     type: CreateUserDTO,
   })
   @ApiResponse({
     status: 201,
-    type: SignupResDTO,
+    type: UserDTO,
     description: 'User created successfully',
   })
   @ApiResponse({
@@ -34,7 +33,7 @@ export class AuthController {
     description: 'username or showName already exists',
   })
   newUser(@Body() data: CreateUserDTO) {
-    return this.authService.signup(data);
+    return this.authService.create(data);
   }
 
   @UseGuards(LocalAuthGuard)
@@ -49,37 +48,9 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Login faild, username or password is wrong',
+    description: 'Login failed, username or password is wrong',
   })
-  async login(@User() userData: UserDTO, @Res() res: Response) {
-    const { token, user } = await this.authService.login(userData);
-    const authResDTO = new AuthResDTO();
-    authResDTO.user = user;
-    authResDTO.accessToken = token.accessToken;
-    return res
-      .cookie('RID', token.refreshToken, { httpOnly: true })
-      .json(authResDTO);
-  }
-
-  @UseGuards(JwtRefreshTokenAuthGuard)
-  @Get('/refresh/token')
-  @ApiResponse({
-    status: 200,
-    type: AuthResDTO,
-    description: 'Refresh token successfully',
-  })
-  @ApiResponse({
-    status: 403,
-    description:
-      'refresh token and access token mismatch or refresh token expired or refresh token used',
-  })
-  async refreshToken(@User() userData: UserDTO, @Res() res: Response) {
-    const { token, user } = await this.authService.reAccessToken(userData);
-    const authResDTO = new AuthResDTO();
-    authResDTO.user = user;
-    authResDTO.accessToken = token.accessToken;
-    return res
-      .cookie('RID', token.refreshToken, { httpOnly: true })
-      .json(authResDTO);
+  async login(@User() userData: UserDTO) {
+    return await this.authService.login(userData);
   }
 }
