@@ -3,10 +3,12 @@ services:
   mysql:
     container_name: mysql
     image: mysql:latest
+    environment:
+      MYSQL_DATABASE: 'otog'
+      MYSQL_ROOT_PASSWORD: '0000'
+      MYSQL_TCP_PORT: 8888
     ports:
       - 8888:8888
-    env_file:
-      - .env
   main:
     container_name: nest
     build:

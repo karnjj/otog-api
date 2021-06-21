@@ -14,7 +14,10 @@ import { DatabaseModule } from './core/database/database.module';
 import { RolesGuard } from './core/guards/roles.guard';
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+      isGlobal: true,
+    }),
     DatabaseModule,
     UserModule,
     AuthModule,
