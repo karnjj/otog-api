@@ -5,9 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
-  Patch,
   Post,
   Put,
   Req,
@@ -18,10 +16,10 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
-  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -36,11 +34,11 @@ import {
   CreateProblemDTO,
   EditProblemDTO,
   ProblemDTO,
-  ToggleProblemDTO,
   UploadedFilesObject,
 } from './dto/problem.dto';
 import { ProblemService } from './problem.service';
 
+@ApiBearerAuth()
 @ApiTags('problem')
 @Controller('problem')
 @UseGuards(RolesGuard)

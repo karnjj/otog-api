@@ -1,6 +1,6 @@
 import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
 
-class ProblemDTOBase {
+export class ProblemDTO {
   @ApiProperty()
   readonly id: number;
 
@@ -15,18 +15,7 @@ class ProblemDTOBase {
   readonly case: string;
 }
 
-export class ProblemDTO extends ProblemDTOBase {
-  @ApiProperty()
-  readonly sname: string;
-
-  readonly show: boolean;
-
-  readonly recentShowTime: Date;
-
-  readonly rating: number;
-}
-
-export class EditProblemDTO extends ProblemDTOBase {
+export class EditProblemDTO extends ProblemDTO {
   readonly pdf?: File;
 
   readonly zip?: File;
@@ -41,5 +30,3 @@ export class UploadedFilesObject {
 
   readonly zip?: Express.Multer.File;
 }
-
-export class ToggleProblemDTO extends PickType(ProblemDTO, ['show'] as const) {}
