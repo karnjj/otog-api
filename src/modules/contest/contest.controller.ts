@@ -88,7 +88,7 @@ export class ContestController {
   @Roles(Role.Admin)
   @Post()
   @ApiBody({ type: CreateContestDTO })
-  @ApiCreatedResponse({ description: 'Contest created succussfully' })
+  @ApiCreatedResponse({ description: 'Contest created successfully' })
   create(@Body() createContest: CreateContestDTO) {
     return this.contestService.create(createContest);
   }
