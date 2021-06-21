@@ -19,22 +19,6 @@ import { UserDTO } from '../user/dto/user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @Post()
-  @ApiBody({
-    type: CreateUserDTO,
-  })
-  @ApiResponse({
-    status: 201,
-    type: UserDTO,
-    description: 'User created successfully',
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'username or showName already exists',
-  })
-  newUser(@Body() data: CreateUserDTO) {
-    return this.authService.create(data);
-  }
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')

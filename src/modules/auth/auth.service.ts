@@ -15,10 +15,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async create(data: CreateUserDTO) {
-    return await this.userService.create(data);
-  }
-
   async validateUser(username: string, pass: string): Promise<UserDTO> {
     const user = await this.userService.findOneByUsername(username);
     if (!user) return null;
