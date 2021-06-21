@@ -37,32 +37,11 @@ export class Contest extends Model {
   @Column
   name: string;
 
-  @Column({
-    type: DataType.ENUM,
-    values: ['rated', 'unrated'],
-    allowNull: false,
-  })
-  mode: ContestMode;
-
-  @Column({
-    type: DataType.ENUM,
-    values: ['acm', 'classic'],
-    allowNull: false,
-  })
-  gradingMode: GradingMode;
-
   @Column
   timeStart: Date;
 
   @Column
   timeEnd: Date;
-
-  @Column({
-    get() {
-      return strToObj(this.getDataValue('announce'));
-    },
-  })
-  announce: string;
 
   @BelongsToMany(() => Problem, () => ContestProblem)
   problems: Problem[];

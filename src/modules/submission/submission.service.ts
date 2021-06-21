@@ -25,38 +25,6 @@ export class SubmissionService {
     });
   }
 
-  findAllWithOutContestAndAdmin(
-    offset: number,
-    limit: number,
-  ): Promise<Submission[]> {
-    return this.submissionRepository.scope('full').findAll({
-      where: {
-        contestId: null,
-        id: {
-          [Op.lt]: offset || 1e9,
-        },
-        '$user.role$': {
-          [Op.not]: Role.Admin,
-        },
-      },
-      limit: limit || 89,
-    });
-  }
-
-  findAllWithContest(offset: number, limit: number): Promise<Submission[]> {
-    return this.submissionRepository.scope('full').findAll({
-      where: {
-        contestId: {
-          [Op.not]: null,
-        },
-        id: {
-          [Op.lt]: offset || 1e9,
-        },
-      },
-      limit: limit || 89,
-    });
-  }
-
   async findOneByResultId(resultId: number) {
     return await this.submissionRepository.scope('full').findOne({
       where: { id: resultId },
@@ -97,32 +65,6 @@ export class SubmissionService {
     return { msg: 'create submission complete.' };
   }
 
-  findAllByUserIdWithOutContest(
-    userId: number,
-    offset: number,
-    limit: number,
-  ): Promise<Submission[]> {
-    return this.submissionRepository.scope('full').findAll({
-      where: {
-        contestId: null,
-        userId,
-        id: {
-          [Op.lt]: offset || 1e9,
-        },
-      },
-      limit: limit || 89,
-    });
-  }
-
-  findOneByUserId(userId: number): Promise<Submission> {
-    return this.submissionRepository.scope('full').findOne({
-      where: { userId },
-      attributes: {
-        include: ['sourceCode'],
-      },
-    });
-  }
-
   findOneByProblemIdAndUserId(
     problemId: number,
     userId: number,
@@ -132,30 +74,6 @@ export class SubmissionService {
       attributes: {
         include: ['sourceCode'],
       },
-    });
-  }
-
-  findAllLatestAccept() {
-    return this.submissionRepository.findAll({
-      attributes: {
-        include: ['userId', 'problemId'],
-      },
-      include: [User.scope('noPass')],
-      where: {
-        id: {
-          [Op.in]: [
-            literal(
-              `SELECT MAX(id) FROM submission WHERE status = 'accept' GROUP BY problemId,userId`,
-            ),
-          ],
-        },
-        '$user.role$': {
-          [Op.not]: Role.Admin,
-        },
-      },
-      order: ['problemId'],
-      raw: true,
-      nest: true,
     });
   }
 }

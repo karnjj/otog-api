@@ -4,11 +4,8 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { sha256 } from 'js-sha256';
-import { Op } from 'sequelize';
-import { ContestMode, Role, USER_REPOSITORY } from 'src/core/constants';
-import { Contest } from 'src/entities/contest.entity';
-import { userList } from 'src/utils';
+import * as bcrypt from 'bcrypt';
+import { Role, USER_REPOSITORY } from 'src/core/constants';
 import { User } from '../../entities/user.entity';
 import { CreateUserDTO } from '../auth/dto/auth.dto';
 import { UserDTO } from './dto/user.dto';
@@ -26,19 +23,19 @@ export class UserService {
     if (showNameExists) {
       throw new ConflictException('showName was taken.');
     }
-    const hash = sha256.create();
-    hash.update(data.password);
+    const user = new User();
     try {
-      const user = new User();
+      const salt = await bcrypt.genSalt();
+      const hash = await bcrypt.hash(data.password, salt);
       user.username = data.username;
-      user.password = hash.hex();
+      user.password = hash;
       user.showName = data.showName;
       user.role = Role.User;
       await user.save();
     } catch {
       throw new BadRequestException();
     }
-    return { message: 'Create user complete.', status: true };
+    return new UserDTO(user);
   }
 
   async findAll(): Promise<UserDTO[]> {
@@ -53,63 +50,9 @@ export class UserService {
     });
   }
 
-  async findOneById(id: number): Promise<User> {
-    return await this.userRepository.findOne({
-      where: { id },
-    });
-  }
-
   async findOneByShowName(showName: string): Promise<User> {
     return await this.userRepository.findOne({
       where: { showName },
-    });
-  }
-
-  async updateShowNameById(showName: string, id: number) {
-    const showNameExists = await this.findOneByShowName(showName);
-    if (showNameExists) {
-      throw new ConflictException('showName was taken.');
-    }
-    const user = await this.findOneById(id);
-    user.showName = showName;
-    await user.save();
-    return new UserDTO(user);
-  }
-
-  async getUserProfileById(id: number): Promise<User> {
-    return await this.userRepository.scope('noPass').findOne({
-      where: {
-        id,
-      },
-      include: [
-        {
-          model: Contest,
-          where: {
-            mode: ContestMode.Rated,
-          },
-          through: {
-            attributes: ['rank', 'ratingAfterUpdate'],
-            as: 'detail',
-            where: {
-              rank: {
-                [Op.not]: null,
-              },
-            },
-          },
-          attributes: ['id', 'name', 'timeEnd'],
-          required: false,
-        },
-      ],
-    });
-  }
-
-  async onlineUser() {
-    const checkList = new Map();
-    const onlineUser = Array.from(userList.values());
-    return onlineUser.filter((user) => {
-      if (checkList.get(user.id)) return false;
-      checkList.set(user.id, true);
-      return true;
     });
   }
 }

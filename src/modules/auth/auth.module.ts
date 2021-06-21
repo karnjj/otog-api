@@ -3,12 +3,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 import { JWT_PRIVATE } from 'src/core/constants';
-import { UserService } from 'src/modules/user/user.service';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
-import { authProvider } from './auth.provider';
 import { AuthService } from './auth.service';
-import { JwtRefreshTokenStrategy } from './jwt.refreshtoken.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
@@ -20,18 +17,12 @@ import { LocalStrategy } from './local.strategy';
       secret: JWT_PRIVATE,
       signOptions: {
         algorithm: 'RS256',
-        expiresIn: '10m',
+        expiresIn: '5h',
       },
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    JwtRefreshTokenStrategy,
-    ...authProvider,
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

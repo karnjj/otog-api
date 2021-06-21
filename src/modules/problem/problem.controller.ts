@@ -3,6 +3,7 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
@@ -12,6 +13,7 @@ import {
   Req,
   Res,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -27,11 +29,9 @@ import {
 import { Request, Response } from 'express';
 import { Role } from 'src/core/constants';
 import { Roles } from 'src/core/decorators/roles.decorator';
-import { User } from 'src/core/decorators/user.decorator';
+import { RolesGuard } from 'src/core/guards/roles.guard';
 import { AuthService } from '../auth/auth.service';
 import { ContestService } from '../contest/contest.service';
-import { UserDTO } from '../user/dto/user.dto';
-import { UserService } from '../user/user.service';
 import {
   CreateProblemDTO,
   EditProblemDTO,
@@ -43,55 +43,23 @@ import { ProblemService } from './problem.service';
 
 @ApiTags('problem')
 @Controller('problem')
+@UseGuards(RolesGuard)
 export class ProblemController {
   constructor(
     private problemService: ProblemService,
     private contestService: ContestService,
     private authService: AuthService,
-    private userService: UserService,
   ) {}
 
+  @Roles(Role.Admin)
   @Get()
   @ApiOkResponse({
     type: ProblemDTO,
     isArray: true,
     description: 'Get problems depends on user permission',
   })
-  async getAllProblems(@User() user: UserDTO) {
-    return user
-      ? user.role == Role.Admin
-        ? await this.problemService.findAllWithSubmissionByUserId_ADMIN(user.id)
-        : await this.problemService.findAllWithSubmissionByUserId(user.id)
-      : await this.problemService.findAllNotShow();
-  }
-
-  @Get('/:problemId')
-  @ApiOkResponse({
-    type: ProblemDTO,
-    description: 'Get problem by id',
-  })
-  @ApiForbiddenResponse({ description: 'Forbidden' })
-  @ApiNotFoundResponse({ description: 'Problem not found' })
-  async getProblemById(
-    @Param('problemId', ParseIntPipe) problemId: number,
-    @User() user: UserDTO,
-  ) {
-    const problem = await this.problemService.findOneById(problemId);
-    if (problem?.show == false && user.role != Role.Admin) {
-      throw new ForbiddenException();
-    }
-    return problem;
-  }
-
-  @Get('/:problemId/user')
-  @ApiOkResponse({
-    type: UserDTO,
-    isArray: true,
-    description: 'Get passed users',
-  })
-  @ApiNotFoundResponse({ description: 'Problem not found' })
-  async getUserAccept(@Param('problemId', ParseIntPipe) problemId: number) {
-    return this.problemService.findAllUserAcceptByProblemId(problemId);
+  async getAllProblems() {
+    return await this.problemService.findAll();
   }
 
   @Get('doc/:problemId')
@@ -103,15 +71,17 @@ export class ProblemController {
     @Res() res: Response,
   ) {
     let user = null;
-    const rid = await req.cookies['RID'];
-    if (rid) {
-      const refreshToken = await this.authService.findOneByRID(rid);
-      user = await this.userService.findOneById(refreshToken?.userId);
+    const accessToken = await req.cookies['accessToken'];
+    if (accessToken) {
+      user = this.authService.decodeJwt(accessToken);
     }
 
     const problem = await this.problemService.findOneById(problemId);
-    if (problem?.show == false && user?.role != Role.Admin) {
-      const contest = await this.contestService.getStartedAndUnFinishedContest();
+    if (!problem) throw new NotFoundException();
+
+    if (user?.role != Role.Admin) {
+      const contest =
+        await this.contestService.getStartedAndUnFinishedContest();
       if (!contest || !contest.problems.some((e) => e.id === problem.id))
         throw new ForbiddenException();
     }
@@ -119,18 +89,6 @@ export class ProblemController {
   }
 
   //Admin route
-  @Roles(Role.Admin)
-  @Patch('/:problemId')
-  @ApiBody({ type: ToggleProblemDTO })
-  @ApiOkResponse({ type: ProblemDTO, description: 'Toggle problem show state' })
-  @ApiNotFoundResponse({ description: 'Problem not found' })
-  changeProblemShowById(
-    @Param('problemId', ParseIntPipe) problemId: number,
-    @Body('show', ParseBoolPipe) show: boolean,
-  ) {
-    return this.problemService.changeProblemShowById(problemId, show);
-  }
-
   @Roles(Role.Admin)
   @Post()
   @ApiConsumes('multipart/form-data')

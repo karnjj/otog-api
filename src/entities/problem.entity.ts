@@ -23,9 +23,6 @@ export class Problem extends Model {
   name: string;
 
   @Column
-  sname: string;
-
-  @Column
   score: number;
 
   @Column
@@ -34,19 +31,8 @@ export class Problem extends Model {
   @Column
   memoryLimit: number;
 
-  @Column({
-    allowNull: false,
-  })
-  show: boolean;
-
-  @Column
-  recentShowTime: Date;
-
   @Column
   case: string;
-
-  @Column
-  rating: number;
 
   @HasOne(() => Submission)
   submission: Submission;

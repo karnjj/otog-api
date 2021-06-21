@@ -43,11 +43,6 @@ export class User extends Model {
   })
   showName: string;
 
-  @Unique
-  @IsEmail
-  @Column
-  email: string;
-
   @Column({
     allowNull: false,
   })
@@ -59,9 +54,6 @@ export class User extends Model {
     allowNull: false,
   })
   role: string;
-
-  @Column
-  rating: number;
 
   @CreatedAt
   creationDate: Date;

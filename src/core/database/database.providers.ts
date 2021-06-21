@@ -6,11 +6,9 @@ import { databaseConfig } from './database.config';
 import { Contest } from 'src/entities/contest.entity';
 import { ContestProblem } from 'src/entities/contestProblem.entity';
 import { Problem } from 'src/entities/problem.entity';
-import { RefreshToken } from 'src/entities/refreshToken.entity';
 import { Submission } from 'src/entities/submission.entity';
 import { User } from 'src/entities/user.entity';
 import { UserContest } from 'src/entities/userContest.entity';
-import { Chat } from 'src/entities/chat.entity';
 
 export const databaseProviders = [
   {
@@ -37,15 +35,13 @@ export const databaseProviders = [
       });
       sequelize.addModels([
         User,
-        Chat,
         Contest,
         ContestProblem,
         Problem,
-        RefreshToken,
         Submission,
         UserContest,
       ]);
-      // await sequelize.sync();
+      await sequelize.sync();
       return sequelize;
     },
   },
