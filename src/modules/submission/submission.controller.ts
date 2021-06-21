@@ -17,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { SubmissionService } from './submission.service';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
@@ -38,6 +39,7 @@ import { User } from 'src/core/decorators/user.decorator';
 import { UserDTO } from '../user/dto/user.dto';
 import { ContestService } from '../contest/contest.service';
 
+@ApiBearerAuth()
 @ApiTags('submission')
 @Controller('submission')
 @UseGuards(RolesGuard)

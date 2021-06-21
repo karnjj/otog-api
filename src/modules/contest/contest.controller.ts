@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -30,6 +31,7 @@ import {
   ScoreboardDTO,
 } from './dto/contest.dto';
 
+@ApiBearerAuth()
 @ApiTags('contest')
 @Controller('contest')
 @UseGuards(RolesGuard)

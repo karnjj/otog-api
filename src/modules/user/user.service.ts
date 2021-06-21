@@ -32,7 +32,7 @@ export class UserService {
       user.showName = data.showName;
       user.role = Role.User;
       await user.save();
-    } catch {
+    } catch (e) {
       throw new BadRequestException();
     }
     return new UserDTO(user);
