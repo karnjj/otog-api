@@ -15,15 +15,13 @@ export class ProblemDTO {
   readonly case: string;
 }
 
-export class EditProblemDTO extends ProblemDTO {
+export class EditProblemDTO extends OmitType(ProblemDTO, ['id'] as const) {
   readonly pdf?: File;
 
   readonly zip?: File;
 }
 
-export class CreateProblemDTO extends OmitType(EditProblemDTO, [
-  'id',
-] as const) {}
+export class CreateProblemDTO extends EditProblemDTO {}
 
 export class UploadedFilesObject {
   readonly pdf?: Express.Multer.File;
