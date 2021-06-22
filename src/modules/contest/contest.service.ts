@@ -50,6 +50,15 @@ export class ContestService {
     }
   }
 
+  async delete(contestId: number) {
+    try {
+      const contest = await this.findOneById(contestId);
+      return await contest.destroy();
+    } catch {
+      throw new BadRequestException();
+    }
+  }
+
   findAll(): Promise<Contest[]> {
     return this.contestRepository.findAll({
       order: [['id', 'DESC']],

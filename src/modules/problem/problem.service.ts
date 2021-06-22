@@ -122,6 +122,22 @@ export class ProblemService {
     return await this.problemRepository.findOne({ where: { id } });
   }
 
+  async delete(problemId: number) {
+    try {
+      const problem = await this.findOneById(problemId);
+
+      const pdfPath = `./docs/${problem.id}.pdf`;
+      if (existsSync(pdfPath)) unlinkSync(pdfPath);
+
+      const testCasePath = `./source/${problem.id}`;
+      if (existsSync(testCasePath)) unlinkSync(testCasePath);
+
+      return await problem.destroy();
+    } catch {
+      throw new BadRequestException();
+    }
+  }
+
   async getProblemDocDir(problem: Problem): Promise<string> {
     const dir = `${process.cwd()}/docs/${problem?.id}.pdf`;
     if (!existsSync(dir)) throw new NotFoundException();
