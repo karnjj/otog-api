@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { col } from 'sequelize';
 import { fn } from 'sequelize';
@@ -110,6 +115,7 @@ export class ContestService {
       },
       order: [['id', 'DESC']],
     });
+    if (!contest) throw new NotFoundException();
     if (contest.timeStart.getTime() > Date.now()) {
       contest.problems = [];
     }
