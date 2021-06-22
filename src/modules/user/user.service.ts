@@ -30,7 +30,7 @@ export class UserService {
       user.username = data.username;
       user.password = hash;
       user.showName = data.showName;
-      user.role = Role.User;
+      user.role = data.role;
       await user.save();
     } catch (e) {
       throw new BadRequestException();

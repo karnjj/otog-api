@@ -9,6 +9,8 @@ export class CreateUserDTO {
   readonly password: string;
 
   readonly showName: string;
+
+  readonly role: Role;
 }
 
 export class LoginReqDTO {
