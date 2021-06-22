@@ -100,6 +100,7 @@ export class ContestService {
               },
             },
           ],
+          required: false,
         },
       ],
       where: { id: contestId },
