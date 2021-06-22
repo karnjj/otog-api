@@ -66,11 +66,12 @@ export class ProblemService {
   }
 
   async ReplaceByProblemId(
+    problemId: number,
     newProblem: EditProblemDTO,
     files: UploadedFilesObject,
   ): Promise<Problem> {
     try {
-      const problem = await this.findOneById(newProblem.id);
+      const problem = await this.findOneById(problemId);
       problem.name = newProblem.name;
       problem.score = newProblem.score;
       problem.timeLimit = newProblem.timeLimit;

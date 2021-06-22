@@ -86,7 +86,6 @@ export class ProblemController {
     return res.sendFile(await this.problemService.getProblemDocDir(problem));
   }
 
-  //Admin route
   @Roles(Role.Admin)
   @Post()
   @ApiConsumes('multipart/form-data')
@@ -133,9 +132,10 @@ export class ProblemController {
     ),
   )
   replaceProblem(
+    @Param('problemId', ParseIntPipe) problemId: number,
     @Body() newProblem: EditProblemDTO,
     @UploadedFiles() files: UploadedFilesObject,
   ) {
-    return this.problemService.ReplaceByProblemId(newProblem, files);
+    return this.problemService.ReplaceByProblemId(problemId, newProblem, files);
   }
 }
