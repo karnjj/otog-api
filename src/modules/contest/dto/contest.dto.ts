@@ -21,6 +21,8 @@ export class CreateContestDTO extends OmitType(ContestDTOBase, [
   'id',
 ] as const) {}
 
+export class EditContestDTO extends CreateContestDTO {}
+
 export class ScoreboardDTO extends ContestDTOBase {
   @ApiProperty()
   readonly problems: ProblemDTO[];

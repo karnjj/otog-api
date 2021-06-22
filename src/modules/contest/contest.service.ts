@@ -14,7 +14,7 @@ import { Submission } from 'src/entities/submission.entity';
 import { User } from 'src/entities/user.entity';
 import { UserContest } from 'src/entities/userContest.entity';
 import { Contest } from '../../entities/contest.entity';
-import { CreateContestDTO } from './dto/contest.dto';
+import { CreateContestDTO, EditContestDTO } from './dto/contest.dto';
 
 @Injectable()
 export class ContestService {
@@ -32,6 +32,18 @@ export class ContestService {
       contest.name = createContest.name;
       contest.timeStart = createContest.timeStart;
       contest.timeEnd = createContest.timeEnd;
+      return await contest.save();
+    } catch {
+      throw new BadRequestException();
+    }
+  }
+
+  async replaceContest(contestId: number, newContest: EditContestDTO) {
+    try {
+      const contest = await this.findOneById(contestId);
+      contest.name = newContest.name;
+      contest.timeStart = newContest.timeStart;
+      contest.timeEnd = newContest.timeEnd;
       return await contest.save();
     } catch {
       throw new BadRequestException();
