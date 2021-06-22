@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -26,6 +27,7 @@ import { ContestService } from './contest.service';
 import {
   ContestDTO,
   CreateContestDTO,
+  EditContestDTO,
   PatchContestDTO,
   ResPatchContestDTO,
   ScoreboardDTO,
@@ -58,7 +60,6 @@ export class ContestController {
     return this.contestService.findOneById(contestId);
   }
 
-  //Admin Only
   @Roles(Role.Admin)
   @Get()
   @ApiOkResponse({
@@ -93,6 +94,20 @@ export class ContestController {
   @ApiCreatedResponse({ description: 'Contest created successfully' })
   create(@Body() createContest: CreateContestDTO) {
     return this.contestService.create(createContest);
+  }
+
+  @Roles(Role.Admin)
+  @Put('/:contestId')
+  @ApiBody({ type: EditContestDTO })
+  @ApiOkResponse({
+    type: ContestDTO,
+    description: 'New contest detail',
+  })
+  editContest(
+    @Param('contestId', ParseIntPipe) contestId: number,
+    @Body() newContest: EditContestDTO,
+  ) {
+    return this.contestService.replaceContest(contestId, newContest);
   }
 
   @Roles(Role.Admin)
