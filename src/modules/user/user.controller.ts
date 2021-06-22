@@ -31,6 +31,7 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Roles(Role.Admin)
   @Post()
   @ApiBody({
     type: CreateUserDTO,
@@ -45,8 +46,6 @@ export class UserController {
     description: 'username or showName already exists',
   })
   newUser(@Body() data: CreateUserDTO) {
-    console.log(data);
-
     return this.userService.create(data);
   }
 }
