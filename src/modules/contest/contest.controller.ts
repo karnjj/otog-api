@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -108,6 +109,16 @@ export class ContestController {
     @Body() newContest: EditContestDTO,
   ) {
     return this.contestService.replaceContest(contestId, newContest);
+  }
+
+  @Roles(Role.Admin)
+  @Delete('/:contestId')
+  @ApiOkResponse({
+    type: ContestDTO,
+    description: 'contest deleted detail',
+  })
+  deleteContest(@Param('contestId', ParseIntPipe) contestId: number) {
+    return this.contestService.delete(contestId);
   }
 
   @Roles(Role.Admin)

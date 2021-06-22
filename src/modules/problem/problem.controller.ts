@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   NotFoundException,
@@ -137,5 +138,15 @@ export class ProblemController {
     @UploadedFiles() files: UploadedFilesObject,
   ) {
     return this.problemService.ReplaceByProblemId(problemId, newProblem, files);
+  }
+
+  @Roles(Role.Admin)
+  @Delete('/:problemId')
+  @ApiOkResponse({
+    type: ProblemDTO,
+    description: 'problem deleted detail',
+  })
+  deleteProblem(@Param('problemId', ParseIntPipe) problemId: number) {
+    return this.problemService.delete(problemId);
   }
 }
