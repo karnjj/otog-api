@@ -3,8 +3,10 @@ services:
   mysql:
     container_name: mysql
     image: mysql:latest
+    volumes:
+      - ./dump:/docker-entrypoint-initdb.d
     environment:
-      MYSQL_DATABASE: 'otog'
+      MYSQL_DATABASE: 'otog-local'
       MYSQL_ROOT_PASSWORD: '0000'
       MYSQL_TCP_PORT: 8888
     ports:
