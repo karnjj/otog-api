@@ -27,10 +27,9 @@ export class SubmissionGateway
   @SubscribeMessage('grader-to-server')
   async receiveSubmission(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: string,
+    @MessageBody() data: Array<any>,
   ) {
-    const [id, result, score, timeUsed, status, errmsg, userId] =
-      JSON.parse(data);
+    const [id, result, score, timeUsed, status, errmsg, userId] = data;
     this.server.to(userId).emit(id, [result, score, timeUsed, status, errmsg]);
   }
 
