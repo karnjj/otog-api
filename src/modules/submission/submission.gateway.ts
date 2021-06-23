@@ -45,21 +45,27 @@ export class SubmissionGateway
   public handleConnection(client: Socket): void {
     const { token } = client.handshake.auth;
     const { key } = client.handshake.query;
-    if (key?.includes(GRADER_KEY) && GRADER_SECRET?.includes(token)) {
-      return this.logger.log(`Grader connected: ${key}`);
+    if (key) {
+      if (key?.includes(GRADER_KEY) && GRADER_SECRET?.includes(token)) {
+        return this.logger.log(`Grader connected: ${key}`);
+      } else {
+        client.disconnect();
+        return this.logger.warn(`Grader missed match: ${key}`);
+      }
     } else {
-      this.logger.warn(`Grader missed match: ${key}`);
-    }
-    if (!key) {
       try {
         const userInfo = this.jwtService.decode(token);
+        if (!userInfo) {
+          client.disconnect();
+          return this.logger.warn(`Client auth failed: ${client.id}`);
+        }
         const user = new UserDTO(userInfo);
         client.join(`${user.id}`);
         return this.logger.log(`Client connected: ${user.id}`);
       } catch {
-        this.logger.warn(`Client auth failed: ${client.id}`);
+        client.disconnect();
+        return this.logger.warn(`Client auth failed: ${client.id}`);
       }
     }
-    client.disconnect();
   }
 }
