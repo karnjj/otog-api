@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { PROBLEM_REPOSITORY } from 'src/core/constants';
 import { Problem } from '../../entities/problem.entity';
-import { existsSync, mkdirSync, renameSync, unlinkSync } from 'fs';
+import { existsSync, mkdirSync, renameSync, rmdirSync, unlinkSync } from 'fs';
 import {
   CreateProblemDTO,
   EditProblemDTO,
@@ -57,7 +57,7 @@ export class ProblemService {
         // unzip source file
         const fileContents = createReadStream(newPath);
         fileContents.pipe(Extract({ path: newDir }));
-        unlinkSync(newPath);
+        rmdirSync(newPath, { recursive: true });
       }
       return problem;
     } catch (err) {
@@ -96,7 +96,7 @@ export class ProblemService {
       if (files.zip) {
         const newDir = `./source/${problem.id}`;
         //remove old dir
-        unlinkSync(newDir);
+        rmdirSync(newDir, { recursive: true });
         // check source dir is exist
         if (!existsSync(newDir)) {
           mkdirSync(newDir, { recursive: true });
@@ -130,10 +130,13 @@ export class ProblemService {
       if (existsSync(pdfPath)) unlinkSync(pdfPath);
 
       const testCasePath = `./source/${problem.id}`;
-      if (existsSync(testCasePath)) unlinkSync(testCasePath);
+      if (existsSync(testCasePath))
+        rmdirSync(testCasePath, { recursive: true });
 
       return await problem.destroy();
-    } catch {
+    } catch (e) {
+      console.log(e);
+
       throw new BadRequestException();
     }
   }
