@@ -11,7 +11,7 @@ import { UserModule } from './modules/user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env.local'],
       isGlobal: true,
     }),
     DatabaseModule,

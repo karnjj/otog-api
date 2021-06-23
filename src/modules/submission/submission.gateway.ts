@@ -46,7 +46,10 @@ export class SubmissionGateway
     const { token } = client.handshake.auth;
     const { key } = client.handshake.headers;
     if (key) {
-      if (key?.includes(GRADER_KEY) && GRADER_SECRET?.includes(token)) {
+      if (
+        (key as string).split('-')[0] === process.env.GRADER_KEY &&
+        process.env.GRADER_SECRET.includes(token)
+      ) {
         return this.logger.log(`Grader connected: ${key}`);
       } else {
         client.disconnect();
