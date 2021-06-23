@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `otog-local` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `otog-local`;
 -- MySQL dump 10.13  Distrib 8.0.25, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: otog-local
@@ -24,7 +26,7 @@ DROP TABLE IF EXISTS `contest`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `contest` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `timeStart` datetime DEFAULT NULL,
   `timeEnd` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -49,11 +51,11 @@ DROP TABLE IF EXISTS `problem`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `problem` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `score` int DEFAULT NULL,
   `timeLimit` int DEFAULT NULL,
   `memoryLimit` int DEFAULT NULL,
-  `case` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `case` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -105,14 +107,14 @@ CREATE TABLE `submission` (
   `id` int NOT NULL AUTO_INCREMENT,
   `userId` int DEFAULT NULL,
   `problemId` int DEFAULT NULL,
-  `result` varchar(255) COLLATE utf8mb4_bin DEFAULT 'WAITING',
+  `result` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT 'WAITING',
   `score` int DEFAULT NULL,
   `timeUsed` int DEFAULT NULL,
-  `status` enum('waiting','grading','accept','reject') COLLATE utf8mb4_bin NOT NULL,
-  `errmsg` text COLLATE utf8mb4_bin,
+  `status` enum('waiting','grading','accept','reject') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `errmsg` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `contestId` int DEFAULT NULL,
-  `sourceCode` text COLLATE utf8mb4_bin,
-  `language` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL,
+  `sourceCode` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `language` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `creationDate` datetime NOT NULL,
   `updateDate` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -141,10 +143,10 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `showName` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_bin NOT NULL,
-  `role` enum('user','admin') COLLATE utf8mb4_bin NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `showName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `role` enum('user','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `creationDate` datetime NOT NULL,
   `updateDate` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -199,4 +201,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-22 14:56:19
+-- Dump completed on 2021-06-22 21:46:14
