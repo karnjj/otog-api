@@ -45,7 +45,7 @@ export class SubmissionGateway
   public handleConnection(client: Socket): void {
     const { token } = client.handshake.auth;
     const { key } = client.handshake.query;
-    if (key.includes(GRADER_KEY) && GRADER_SECRET.includes(token)) {
+    if (key?.includes(GRADER_KEY) && GRADER_SECRET?.includes(token)) {
       return this.logger.log(`Grader connected: ${key}`);
     } else {
       this.logger.warn(`Grader missed match: ${key}`);
