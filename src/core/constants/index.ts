@@ -13,6 +13,8 @@ export const JWT_PRIVATE = fs.readFileSync('./private.key', 'utf8');
 export const JWT_PUBLIC = fs.readFileSync('./public.key', 'utf8');
 export const ROLES_KEY = 'roles';
 export const IS_PUBLIC_KEY = 'isPublic';
+export const GRADER_KEY = process.env.GRADER_KEY;
+export const GRADER_SECRET = process.env.GRADER_SECRET;
 
 export enum Role {
   User = 'user',
