@@ -18,3 +18,15 @@ export function scodeFileSizeLimit(
 export const strToObj = (data: string) => {
   return data == null ? [] : JSON.parse(data);
 };
+
+export const isGrader = (key: string | string[]) => {
+  return (key as string)?.split('-')[0] === process.env.GRADER_KEY;
+};
+
+export const isUser = (key: string | string[]) => {
+  return (key as string) === process.env.USER_KEY;
+};
+
+export const isLoad = (key: string | string[]) => {
+  return (key as string) === process.env.LOAD_KEY;
+};
