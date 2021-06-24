@@ -72,14 +72,14 @@ export class SubmissionGateway
     return this.server.to(`${graderId}`).emit('grade-this-id', submissionId);
   }
 
-  @SubscribeMessage('finish-sub')
-  async setGraderFree(@ConnectedSocket() client: Socket) {
-    const { key } = client.handshake.headers;
-    if (!isGrader(key)) return client.disconnect();
+  // @SubscribeMessage('finish-sub')
+  // async setGraderFree(@ConnectedSocket() client: Socket) {
+  //   const { key } = client.handshake.headers;
+  //   if (!isGrader(key)) return client.disconnect();
 
-    const uid = client.id;
-    if (graderList.has(uid)) graderList.set(uid, true);
-  }
+  //   const uid = client.id;
+  //   if (graderList.has(uid)) graderList.set(uid, true);
+  // }
   public afterInit(server: Server): void {
     return this.logger.log('Init');
   }
