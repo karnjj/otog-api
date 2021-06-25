@@ -77,12 +77,11 @@ export class ContestService {
   }
 
   async findOneByIdBlockProblem(contestId: number) {
-    const contest = (
-      await this.contestRepository
-        .scope('full')
-        .findOne({ where: { id: contestId } })
-    ).get({ plain: true });
+    let contest = await this.contestRepository
+      .scope('full')
+      .findOne({ where: { id: contestId } });
     if (!contest) throw new NotFoundException();
+    contest = contest.get({ plain: true });
     if (contest.timeStart.getTime() > Date.now()) {
       contest.problems = [];
     }
@@ -121,17 +120,16 @@ export class ContestService {
   }
 
   async currentContest() {
-    const contest = (
-      await this.contestRepository.scope('full').findOne({
-        where: {
-          timeEnd: {
-            [Op.gte]: Date.now() - 60 * 60 * 1000,
-          },
+    let contest = await this.contestRepository.scope('full').findOne({
+      where: {
+        timeEnd: {
+          [Op.gte]: Date.now() - 60 * 60 * 1000,
         },
-        order: [['id', 'DESC']],
-      })
-    ).get({ plain: true });
+      },
+      order: [['id', 'DESC']],
+    });
     if (!contest) throw new NotFoundException();
+    contest = contest.get({ plain: true });
     if (contest.timeStart.getTime() > Date.now()) {
       contest.problems = [];
     }
