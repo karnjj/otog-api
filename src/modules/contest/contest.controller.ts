@@ -23,7 +23,9 @@ import {
 } from '@nestjs/swagger';
 import { Role } from 'src/core/constants';
 import { Roles } from 'src/core/decorators/roles.decorator';
+import { User } from 'src/core/decorators/user.decorator';
 import { RolesGuard } from 'src/core/guards/roles.guard';
+import { UserDTO } from '../user/dto/user.dto';
 import { ContestService } from './contest.service';
 import {
   ContestDTO,
@@ -57,8 +59,14 @@ export class ContestController {
     description: 'Get contest by id',
   })
   @ApiNotFoundResponse({ description: 'Contest not found' })
-  getContestById(@Param('contestId', ParseIntPipe) contestId: number) {
-    return this.contestService.findOneById(contestId);
+  getContestById(
+    @Param('contestId', ParseIntPipe) contestId: number,
+    @User() user: UserDTO,
+  ) {
+    if (user.role == Role.Admin)
+      return this.contestService.findOneById(contestId);
+    else if (user.role == Role.User)
+      return this.contestService.findOneByIdBlockProblem(contestId);
   }
 
   @Roles(Role.Admin)
