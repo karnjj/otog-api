@@ -144,4 +144,14 @@ export class ContestController {
   ) {
     return this.contestService.addProblemToContest(contestId, problemId, show);
   }
+
+  @Roles(Role.Admin)
+  @Post('/:contestId/signup')
+  @ApiCreatedResponse({ description: 'Add user to contest successfully' })
+  addUserToContest(
+    @Param('contestId', ParseIntPipe) contestId: number,
+    @Body('userId', ParseIntPipe) userId: number,
+  ) {
+    return this.contestService.addUserToContest(contestId, userId);
+  }
 }
