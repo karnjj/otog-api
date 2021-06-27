@@ -110,6 +110,7 @@ export class ContestService {
                   ],
                 },
               },
+              required: false,
             },
           ],
           required: false,
